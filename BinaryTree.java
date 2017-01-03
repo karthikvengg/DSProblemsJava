@@ -1,6 +1,11 @@
 package binarytree;
 import java.util.*;
-
+/*
+Write a program to return the mirror tree of a given binary tree.
+Print the Level order traversal and other traversals
+Create a Balanced BST
+Search in BST
+*/
 public class BinaryTree {
     Node root;
     Node mirrorRoot;
