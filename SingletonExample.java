@@ -17,17 +17,16 @@ public class SingletonExample {
 
 class Singleton{
     public String str;
-    private static Singleton obj;
+    private static volatile Singleton obj;
     private Singleton(){}
     public static Singleton getSingleInstance(){
         if(obj==null){
-            synchronized(new Object()){
+            synchronized(Singleton.class){
                 if(obj==null){
-                    obj = new Singleton();
-                    return obj;
+                    obj = new Singleton();                    
                 }
             }            
         }
-        return null;
+        return obj;
     }    
 }
