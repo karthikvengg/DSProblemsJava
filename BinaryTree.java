@@ -5,12 +5,13 @@ Write a program to return the mirror tree of a given binary tree.
 Print the Level order traversal and other traversals
 Create a Balanced BST
 Search in BST
+Height of the given tree
 */
 public class BinaryTree {
     Node root;
     Node mirrorRoot;
     public static void main(String[] args) {
-        BinaryTree tree = new BinaryTree();   
+        BinaryTree tree = new BinaryTree();
         List<Integer> ls = new LinkedList<Integer>();
         ls.add(25);
         ls.add(15);
@@ -23,7 +24,19 @@ public class BinaryTree {
         //while(itr.hasNext())
         //   System.out.print(itr.next()+" ");
         tree.createBalancedBST(ls,0,ls.size()-1);
+        System.out.println("Root key: "+tree.root.key);
+        System.out.println("Inorder Traversal:");
+        tree.inOrderTraversal(tree.root,null);
+        System.out.println();
+        System.out.println("Inorder Traversal without recursion:");
+        tree.inOrderTraversal(tree.root,false);
+        System.out.println();        
+        System.out.println("Inorder Traversal of parent nodes");
         tree.inOrderTraversal(tree.root);
+        System.out.println();
+        int h = tree.height(tree.root);
+        System.out.println("Tree height: " + h);
+        
         /*
         tree.addNode(25);
         tree.addNode(15);
@@ -46,7 +59,7 @@ public class BinaryTree {
         tree.addNodeMirror(15);
         tree.addNodeMirror(30);
         tree.addNodeMirror(75);
-        tree.addNodeMirror(85);         
+        tree.addNodeMirror(85);
         System.out.println("Mirrored Inorder Traversal:");
         tree.inOrderTraversal(tree.mirrorRoot);
         System.out.println();        
@@ -54,8 +67,19 @@ public class BinaryTree {
         tree.levelOrderTraversal(tree.root);
         System.out.println();     
         */
-        System.out.println("Inorder Traversal:");
     }   
+    
+    int height(Node n){
+        if (n==null)
+            return 0;
+        int lheight = height(n.left);
+        int rheight = height(n.right);
+        
+        if (lheight>rheight)
+            return lheight + 1;
+        else
+            return rheight + 1;        
+    }
     
     //Under construction
     void removeNode(int key,Node parent,Node CurrentNode){
@@ -143,24 +167,56 @@ public class BinaryTree {
             }
         }
     }    
-    void inOrderTraversal(Node CurrentNode){
+
+    void inOrderTraversal(Node CurrentNode, Node ParentNode){
         if (CurrentNode != null) {
-            inOrderTraversal(CurrentNode.left);
+            inOrderTraversal(CurrentNode.left,CurrentNode);           
             System.out.print(CurrentNode.key+" ");
-            inOrderTraversal(CurrentNode.right);    
+            CurrentNode.parent = ParentNode;
+            inOrderTraversal(CurrentNode.right,CurrentNode);    
         }        
     }
+    void inOrderTraversal(Node CurrentNode){
+        if (CurrentNode != null) {
+            inOrderTraversal(CurrentNode.left);  
+            if (CurrentNode.parent != null)
+                System.out.print(CurrentNode.parent.key+" ");
+            else
+                System.out.print("null ");
+            inOrderTraversal(CurrentNode.right);    
+        }        
+    }    
+    void inOrderTraversal(Node CurrentNode, boolean placeHolder){ //without using recursion
+        if (CurrentNode == null)
+            return;
+        Stack<Node> st = new Stack<Node>();        
+        st.push(CurrentNode);
+        while(true){            
+            while(CurrentNode.left!=null){
+                st.push(CurrentNode.left);    
+                CurrentNode = CurrentNode.left;
+            }
+            CurrentNode = st.pop();            
+            System.out.print(CurrentNode.key+" ");         
+            if(CurrentNode.right!=null){
+                CurrentNode = CurrentNode.right;               
+                st.push(CurrentNode);                
+            }                
+            if (st.empty())
+                break;
+        }
+    }        
     void preOrderTraversal(Node CurrentNode){
         if (CurrentNode != null) {
             System.out.print(CurrentNode.key+" ");
-            inOrderTraversal(CurrentNode.left);            
-            inOrderTraversal(CurrentNode.right);    
+            preOrderTraversal(CurrentNode.left);            
+            preOrderTraversal(CurrentNode.right);    
         }        
     }    
     void postOrderTraversal(Node CurrentNode){
         if (CurrentNode != null) {            
-            inOrderTraversal(CurrentNode.left);            
-            inOrderTraversal(CurrentNode.right);    
+            postOrderTraversal(CurrentNode.left);            
+            postOrderTraversal(CurrentNode.right);    
             System.out.print(CurrentNode.key+" ");            
         }        
     }    
@@ -195,7 +251,7 @@ public class BinaryTree {
 
 class Node{
     int key;
-    Node left,right;
+    Node left,right,parent;
     Node(int key){
         this.key=key;
     }
