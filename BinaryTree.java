@@ -20,10 +20,11 @@ public class BinaryTree {
         ls.add(85);
         ls.add(50);
         Collections.sort(ls);
-        Iterator itr = ls.iterator();
+        //Iterator itr = ls.iterator();
         //while(itr.hasNext())
         //   System.out.print(itr.next()+" ");
         tree.createBalancedBST(ls,0,ls.size()-1);
+		System.out.println(tree.findNode(50, tree.root));
         System.out.println("Root key: "+tree.root.key);
         System.out.println("Inorder Traversal:");
         tree.inOrderTraversal(tree.root,null);
@@ -233,19 +234,18 @@ public class BinaryTree {
         }        
     }     
     String findNode(int key,Node CurrentNode){
-        if(CurrentNode==null){
-            return "Invalid tree";
-        }
-        else if(key<CurrentNode.key){
-            findNode(key,CurrentNode.left);
-        }
-        else if(key>CurrentNode.key){
-            findNode(key,CurrentNode.right);
-        }
-        else{
-            return "Found: "+key;
-        }        
-        return "Not found";
+        if(CurrentNode!=null){ 
+			if(CurrentNode.key==key){
+				return "Found: "+key;
+			}
+			else if(key<CurrentNode.key){
+				return findNode(key,CurrentNode.left);
+			}
+			else if(key>CurrentNode.key){
+				return findNode(key,CurrentNode.right);
+			}      
+			return "Not found";
+		}
     }  
 }
 
