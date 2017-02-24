@@ -1,9 +1,14 @@
 /*
-Producer Consumer Problem with Blocking Queue
+Producer Consumer Problem with Blocking Queue and Thread using Executor Service
  */
 package ProducerConsumer;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,36 +17,42 @@ public class ProducerConsumer {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException, ExecutionException {
         
         BlockingQueue queue = new ArrayBlockingQueue(5);
+        //Executors.newSingleThreadExecutor();
+        //Executors.newFixedThreadPool(10);
+        //Executors.newScheduledThreadPool(10);
+        ExecutorService executor=Executors.newFixedThreadPool(2);
         Demo d = new Demo(queue);
-        new Thread("Producer"){
+        executor.execute(new Runnable(){
             public void run(){
                 for(int i=0;i<5;i++){
                     try {
                         d.produce(i);
+                        Thread.sleep(10);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(BubbleSort.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+        Future future = executor.submit(new Callable(){
+            public String call(){
+                for(int i=0;i<5;i++){
+                    try {
+                        d.consume();
                         Thread.sleep(1000);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(BubbleSort.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
+                return "Done";
             }
-        }.start();
-        new Thread("Producer"){
-            public void run(){
-                for(int i=0;i<5;i++){
-                    try {
-                        d.consume();
-                        Thread.sleep(100);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(BubbleSort.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        }.start();
-    }
-    
+        });
+        System.out.println(""+future.get());
+        executor.shutdown();                
+    }   
 }
 
 class Demo{
