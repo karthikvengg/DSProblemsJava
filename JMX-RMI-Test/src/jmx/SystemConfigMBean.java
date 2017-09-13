@@ -1,3 +1,4 @@
+package jmx;
 public interface SystemConfigMBean {
 
     public void setThreadCount(int noOfThreads);

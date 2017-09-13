@@ -1,3 +1,4 @@
+package jmx;
 public class SystemConfig implements SystemConfigMBean {
 
     private int threadCount;

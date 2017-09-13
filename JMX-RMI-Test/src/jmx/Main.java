@@ -1,11 +1,14 @@
+package jmx;
 import java.lang.management.ManagementFactory;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+
 public class Main {
     
 	public static void main(String[] args) throws Exception{
+		
 		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 		SystemConfig mBean = new SystemConfig(10, "karthik");
         ObjectName name = new ObjectName("com.journaldev.jmx:type=SystemConfig");
