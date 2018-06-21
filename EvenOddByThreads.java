@@ -1,76 +1,40 @@
-/*
-Print Even and Odd numbers using Wait and Notify
- */
-package evenoddbythreads;
-import static java.lang.System.out;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-/**
- *
- * @author Karthikeyan_Varadara
- */
-public class EvenOddByThreads {
-    
-    public static void main(String []args){
-        PrintValues pv = new PrintValues();
-        new Thread("Odd"){            
-            public void run(){
-                for(int i=0;i<5;i++){
-                    try {
-                        pv.odd();
-                        Thread.sleep(500);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(EvenOddByThreads.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        }.start();
-        
-        new Thread("Even"){            
-            public void run(){
-                for(int i=0;i<5;i++){
-                    try {
-                        pv.even();
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(EvenOddByThreads.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        }.start();
-        
-    }
-}
+package test;
 
-class PrintValues{
-    int count=1;
-    boolean isEven;
-    
-    synchronized void odd(){
-        if(isEven){
-            try {
-                this.wait();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(PrintValues.class.getName()).log(Level.SEVERE, null, ex);
+public class EvenOddByThreads {
+    static int count;
+    static EvenOddByThreads t = new EvenOddByThreads();
+    static boolean flag = true;
+    public static void main(String[] args) {
+
+        new Thread(new Runnable() {
+            public void run() {
+                t.increment();
             }
-        }
-        out.println(count+" "+Thread.currentThread().getName());
-        count++;
-        isEven=true;
-        this.notify();        
+        },"Odd").start();
+        new Thread(new Runnable() {
+            public void run() {
+                t.increment();
+            }
+        },"Even").start();
     }
-    
-    synchronized void even(){
-        if(!isEven){
-            try {
-                this.wait();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(PrintValues.class.getName()).log(Level.SEVERE, null, ex);
+
+    synchronized void increment(){
+        for(int i=0;i<10;i++) {
+            if(flag) {
+                count++;
+                System.out.println(count + " By " + Thread.currentThread().toString());
+                try {
+                    Thread.sleep(500);
+                    flag=false;
+                    this.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                flag=true;
+                this.notify();
             }
         }
-        out.println(count+" "+Thread.currentThread().getName());              
-        count++;
-        isEven=false;
-        this.notify();
     }
 }
